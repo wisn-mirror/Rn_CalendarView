@@ -14,19 +14,19 @@ An  calendar component for react-native.
 import CalendarView from "./CalendarView";
 
 module.exports = React.createClass({
-render () {
-return (<CalendarView
-year={2017}
-month={9}
-isEN={true}
-head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
-isShowHeader={true}
-selectDay={21}
-selectOnListener={(year,date) => {
-Alert.alert("选择", "选中日期" + year+"-"+date);
-}}
-/>);
-}
+    render () {
+        return (<CalendarView
+                    year={2017}
+                    month={9}
+                    isEN={true}
+                    head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
+                    isShowHeader={true}
+                    selectDay={21}
+                    selectOnListener={(year,date) => {
+                    Alert.alert("选择", "选中日期" + year+"-"+date);
+                }}
+             />);
+        }
 });
 ```
 
@@ -51,6 +51,61 @@ currentDayStyle | set currentDayStyle 设置当天日期字体的样式| View.pr
 
 
 ### ScreenShot
+
+
+## Usage
+
+```js
+import CalendarView from "./CalendarView";
+
+module.exports = React.createClass({
+    render () {
+        return (<CalendarView
+                    year={2017}
+                    month={9}
+                    isEN={true}
+                    head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
+                    isShowHeader={true}
+                    selectDay={21}
+                    selectOnListener={(year,date) => {
+                    Alert.alert("选择", "选中日期" + year+"-"+date);
+                }}
+             />);
+        }
+});
+```
+<img width="30%" src="./img/shot0.jpg" />
+
+
+<img width="30%" src="./img/shot3.jpg" />
+
+## Usage
+
+```js
+import CalendarView from "./CalendarView";
+
+module.exports = React.createClass({
+    render () {
+        return (<CalendarView
+                    year={2017}
+                    month={9}
+                    isEN={true}
+                    head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
+                    isShowHeader={true}
+                    selectDay={21}
+                    selectOnListener={(year,date) => {
+                    Alert.alert("选择", "选中日期" + year+"-"+date);
+                    }}
+                    currentDayStyle={{backgroundColor:"#b42fff",color:"white"}}
+                    selectDayStyle={{backgroundColor:"#1c8bff",color:"white"}}
+                    dayStyle={{backgroundColor:"#ddffd0",color:"#000"}}
+             />);
+        }
+});
+```
+<img width="30%" src="./img/shot1.jpg" />
+
+<img width="30%" src="./img/shot2.jpg" />
 
 <img width="30%" src="./img/screenshot_en.png" />
 

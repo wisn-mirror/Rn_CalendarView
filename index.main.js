@@ -17,7 +17,7 @@ import CalendarView from "./CalendarView";
 export default class MainView extends Component {
     render() {
         return (
-            <View style={{marginTop:40}}>
+            <View style={{marginTop:20}}>
             <CalendarView
                 year={2017}
                 month={9}
@@ -28,11 +28,31 @@ export default class MainView extends Component {
                 selectOnListener={(year,date) => {
                     Alert.alert("选择", "选中日期" + year+"-"+date);
                 }}
+
             />
             </View>
         );
     }
 }
+/*
+calendarStyle: View.propTypes.style,
+        //星期的一行的样式
+        titleHeaderRowStyle: View.propTypes.style,
+        //星期字体的样式
+        titleHeaderStyle: View.propTypes.style,
+        //正常天数的样式
+        dayStyle: View.propTypes.style,
+        //正常天数的一行的样式
+        dayRowStyle: View.propTypes.style,
+        //选中的样式
+        selectDayStyle: View.propTypes.style,
+        //当天选中的样式
+        currentDayStyle: View.propTypes.style,
+                currentDayStyle={{backgroundColor:"#b42fff",color:"white"}}
+                selectDayStyle={{backgroundColor:"#1c8bff",color:"white"}}
+                dayStyle={{backgroundColor:"#ddffd0",color:"#000"}}
+
+* */
 
 const styles = StyleSheet.create({
     container: {

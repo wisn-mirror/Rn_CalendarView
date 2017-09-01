@@ -12,19 +12,6 @@ export const SCREEN_WIDTH = Dimensions.get('window').width;
 const weekCN = ['日', '一', '二', '三', '四', '五', '六'];
 const weekEN = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 export default class CalendarView extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            year: this.props.year ? this.props.year : this.getNowYear(),
-            month: (this.props.month && this.props.month <= 12 && this.props.month > 0) ? this.props.month : this.getNowMonth(),
-            isShow: true,
-            isShowStr: '收起',
-            select: this.props.selectDay?this.props.selectDay:-1,
-            head: this.props.head ? this.props.head : (this.props.isEN ? weekEN : weekCN),
-            isShowHeader: this.props.isShowHeader ? this.props.isShowHeader : false,
-        };
-    }
-
     static propTypes = {
         //日历背景的样式
         calendarStyle: View.propTypes.style,
@@ -54,7 +41,19 @@ export default class CalendarView extends Component {
         isShowHeader: PropTypes.bool,
         //指定默认选中
         selectDay:PropTypes.number,
+    }
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            year: this.props.year ? this.props.year : this.getNowYear(),
+            month: (this.props.month && this.props.month <= 12 && this.props.month > 0) ? this.props.month : this.getNowMonth(),
+            isShow: true,
+            isShowStr: '收起',
+            select: this.props.selectDay?this.props.selectDay:-1,
+            head: this.props.head ? this.props.head : (this.props.isEN ? weekEN : weekCN),
+            isShowHeader: this.props.isShowHeader ? this.props.isShowHeader : false,
+        };
     }
 
     componentDidMount() {
@@ -72,23 +71,26 @@ export default class CalendarView extends Component {
 
             })
         }
+        //更新头部显示中／英或自定义头部
         if (this.state.head !== nextProps.head || this.state.isEN !== nextProps.isEN) {
             this.setState({
                 head: nextProps.head ? nextProps.head : (nextProps.isEN ? weekEN : weekCN),
             })
         }
+        //是否显示顶部header control
         if (this.state.isShowHeader !== nextProps.isShowHeader) {
             this.setState({
                 isShowHeader: nextProps.isShowHeader ? nextProps.isShowHeader : false,
             })
         }
+        //更新选中天
         if (this.state.select !== nextProps.selectDay) {
             this.setState({
                 select: nextProps.selectDay ? nextProps.selectDay : false,
             })
         }
     }
-
+    //底部是否隐藏日历
     _PressIsShow() {
         this.setState({
             isShow: !this.state.isShow,
@@ -160,7 +162,7 @@ export default class CalendarView extends Component {
                 } else {
                     if ((MonthDaySum + weekStart) >= ItemIndex) {
                         var selectStyle = {};
-                        var textColorStyle = {};
+                        var weekendStyle = {};
                         if (date === this.state.select) {
                             //选中的样式
                             selectStyle =this.props.selectDayStyle?this.props.selectDayStyle: {backgroundColor: "#ff9821", color: 'white'};
@@ -169,9 +171,9 @@ export default class CalendarView extends Component {
                         }
                         if (j === 0 || j === 6) {
                             //周六周日的样式
-                            textColorStyle = {color: "#ff6e32", backgroundColor: "#f4f4f4"};
+                            weekendStyle = {color: "#ff6e32", backgroundColor: "#f4f4f4"};
                         } else {
-                            textColorStyle = null;
+                            weekendStyle = null;
                         }
                         if (ItemIndex === (today + weekStart)) {
                             //今天
@@ -179,7 +181,7 @@ export default class CalendarView extends Component {
                                 <TouchableOpacity key={ItemIndex}
                                                   onPress={this._pressDay.bind(this, this.state.year, date)}>
                                     <Text
-                                        style={[styles.monthDayStyle, {backgroundColor: "#72ff17"}, selectStyle, textColorStyle,this.props.currentDayStyle]}
+                                        style={[styles.monthDayStyle, {backgroundColor: "#72ff17"}, selectStyle, weekendStyle,this.props.currentDayStyle]}
                                     >{date}</Text>
                                 </TouchableOpacity>)
                         } else {
@@ -187,7 +189,7 @@ export default class CalendarView extends Component {
                             RowViews.push(
                                 <TouchableOpacity key={ItemIndex}
                                                   onPress={this._pressDay.bind(this, this.state.year, date)}>
-                                    <Text style={[styles.monthDayStyle, textColorStyle, selectStyle,this.props.dayStyle]}>{date}</Text>
+                                    <Text style={[styles.monthDayStyle, this.props.dayStyle,weekendStyle, selectStyle]}>{date}</Text>
                                 </TouchableOpacity>)
 
                         }
