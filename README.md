@@ -112,7 +112,9 @@ module.exports = React.createClass({
 <img width="30%" src="./img/shot6.jpg" />
 
 <img width="30%" src="./img/shot7.jpg" />
+
 ## Usage
+
 ```js
 import CalendarView from "./CalendarView";
 module.exports = React.createClass({
