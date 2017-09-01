@@ -1,0 +1,3 @@
+rootProject.name = 'Rn_CalendarView'
+
+include ':app'
