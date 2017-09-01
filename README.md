@@ -1,6 +1,4 @@
 # Rn_CalendarView
-[![download][download-image]][download-url]
-
 [npm-image]:https://github.com/wisn-mirror/Rn_CalendarView
 [npm-url]:https://github.com/wisn-mirror/Rn_CalendarView
 [download-image]: https://github.com/wisn-mirror/Rn_CalendarView
