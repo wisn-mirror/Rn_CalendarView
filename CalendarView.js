@@ -9,16 +9,18 @@ import {
 import Dimensions from 'Dimensions';
 
 export const SCREEN_WIDTH = Dimensions.get('window').width;
-const week = ['日', '一', '二', '三', '四', '五', '六'];
+const weekCN = ['日', '一', '二', '三', '四', '五', '六'];
+const weekEN = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 export default class CalendarView extends Component {
     constructor(props) {
         super(props);
         this.state = {
             year: this.props.year ? this.props.year : null,
-            month: (this.props.month&& this.props.month<=12&&this.props.month>0)? this.props.month : null,
+            month: (this.props.month && this.props.month <= 12 && this.props.month > 0) ? this.props.month : null,
             isShow: true,
             isShowStr: '收起',
             select: -1,
+            head: this.props.head ? this.props.head : (this.props.isEN ? weekEN : weekCN),
         };
     }
 
@@ -29,7 +31,11 @@ export default class CalendarView extends Component {
         //指定月 不传值默认本月
         month: PropTypes.number,
         //监听选择事件
-        selectOnListener:PropTypes.func,
+        selectOnListener: PropTypes.func,
+        //自定义表头
+        head: PropTypes.array,
+        //是否英文 表头
+        isEN: PropTypes.bool,
     }
 
     componentDidMount() {
@@ -43,10 +49,16 @@ export default class CalendarView extends Component {
         if (this.state.year !== nextProps.year || this.state.month !== nextProps.month) {
             this.setState({
                 year: nextProps.year,
-                month: (nextProps.month&& nextProps.month<=12&&nextProps.month>0)? nextProps.month : null,
+                month: (nextProps.month && nextProps.month <= 12 && nextProps.month > 0) ? nextProps.month : null,
                 select: -1,
             })
         }
+        if (this.state.head !== nextProps.head || this.state.isEN !== nextProps.isEN) {
+            this.setState({
+                head: nextProps.head ? nextProps.head : (nextProps.isEN ? weekEN : weekCN),
+            })
+        }
+
     }
 
     _PressIsShow() {
@@ -98,24 +110,25 @@ export default class CalendarView extends Component {
                         } else {
                             selectStyle = null;
                         }
-                        if(j===0||j===6){
+                        if (j === 0 || j === 6) {
                             //周六周日的样式
-                            textColorStyle = {color: "#ff1760", backgroundColor:"#dfdfdf"};
-                        }else{
-                            textColorStyle=null;
+                            textColorStyle = {color: "#ff1760", backgroundColor: "#dfdfdf"};
+                        } else {
+                            textColorStyle = null;
                         }
                         if (index === (today + weekStart)) {
                             //今天
                             views.push(
                                 <TouchableOpacity key={index} onPress={this._pressDay.bind(this, date)}>
-                                    <Text style={[styles.monthDayStyle, {backgroundColor: "#a6ffac"}, selectStyle,textColorStyle]}
+                                    <Text
+                                        style={[styles.monthDayStyle, {backgroundColor: "#a6ffac"}, selectStyle, textColorStyle]}
                                     >{date}</Text>
                                 </TouchableOpacity>)
                         } else {
                             //除了今天的其他的所有天
                             views.push(
                                 <TouchableOpacity key={index} onPress={this._pressDay.bind(this, date)}>
-                                    <Text style={[styles.monthDayStyle, selectStyle,textColorStyle]}>{date}</Text>
+                                    <Text style={[styles.monthDayStyle, selectStyle, textColorStyle]}>{date}</Text>
                                 </TouchableOpacity>)
 
                         }
@@ -138,16 +151,17 @@ export default class CalendarView extends Component {
         this.setState({
             select: data,
         })
-        if(this.props.selectOnListener){
+        if (this.props.selectOnListener) {
             this.props.selectOnListener(data);
         }
     }
 
     getTitleView() {
         var views = [];
-        for (var i = 0; i < week.length; i++) {
+        var arr = this.state.head;
+        for (var i = 0; i < arr.length; i++) {
             views.push(<Text key={i}
-                             style={styles.titleStyle}>{week[i]}</Text>)
+                             style={styles.titleStyle}>{arr[i]}</Text>)
         }
         return views;
     }
@@ -178,9 +192,9 @@ export default class CalendarView extends Component {
         var d = new Date();
         // console.log("TAG"+d.getFullYear() +"  " +this.state.year+" "+(d.getMonth() + 1) +"   "+ this.state.month)
         //当前月选中当天 如果this.state.year，this.state.month为null 是非法，默认本月，不为null是要和当月相等
-        if ((this.state.year === null||this.state.month === null ) || (d.getFullYear() === this.state.year && (d.getMonth() + 1) === this.state.month)) {
+        if ((this.state.year === null || this.state.month === null ) || (d.getFullYear() === this.state.year && (d.getMonth() + 1) === this.state.month)) {
             return d.getDate();
-        }else {
+        } else {
             return -1;
         }
     }
@@ -246,8 +260,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         height: 30,
         fontSize: 14,
-        marginTop:4,
-        color:'#ff3e08',
+        marginTop: 4,
+        color: '#ff3e08',
     }
 });
 

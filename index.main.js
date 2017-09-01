@@ -19,7 +19,9 @@ export default class MainView extends Component {
         return (
             <CalendarView
                 year={2017}
-                month={7}
+                month={9}
+                isEN={true}
+                //head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
                 selectOnListener={(date) => {
                     Alert.alert("选择", "选中日期" + date);
                 }}
