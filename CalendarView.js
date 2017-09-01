@@ -19,7 +19,7 @@ export default class CalendarView extends Component {
             month: (this.props.month && this.props.month <= 12 && this.props.month > 0) ? this.props.month : this.getNowMonth(),
             isShow: true,
             isShowStr: '收起',
-            select: -1,
+            select: this.props.selectDay?this.props.selectDay:-1,
             head: this.props.head ? this.props.head : (this.props.isEN ? weekEN : weekCN),
             isShowHeader: this.props.isShowHeader ? this.props.isShowHeader : false,
         };
@@ -39,21 +39,24 @@ export default class CalendarView extends Component {
         isEN: PropTypes.bool,
         //是否显示头部
         isShowHeader: PropTypes.bool,
+        //指定默认选中
+        selectDay:PropTypes.number,
+
     }
 
     componentDidMount() {
-        this.setState({
+       /* this.setState({
             select: this.mGetTodyDate(),
-        });
+        });*/
     }
 
     componentWillReceiveProps(nextProps) {
         //动态更新
         if (this.state.year !== nextProps.year || this.state.month !== nextProps.month) {
             this.setState({
-                year: nextProps.year?nextProps.year:this.getNowYear(),
+                year: nextProps.year ? nextProps.year : this.getNowYear(),
                 month: (nextProps.month && nextProps.month <= 12 && nextProps.month > 0) ? nextProps.month : this.getNowMonth(),
-                select: -1,
+
             })
         }
         if (this.state.head !== nextProps.head || this.state.isEN !== nextProps.isEN) {
@@ -61,12 +64,16 @@ export default class CalendarView extends Component {
                 head: nextProps.head ? nextProps.head : (nextProps.isEN ? weekEN : weekCN),
             })
         }
-        if(this.state.isShowHeader!==nextProps.isShowHeader){
+        if (this.state.isShowHeader !== nextProps.isShowHeader) {
             this.setState({
-                isShowHeader: nextProps.isShowHeader ? nextProps.isShowHeader :false,
+                isShowHeader: nextProps.isShowHeader ? nextProps.isShowHeader : false,
             })
         }
-
+        if (this.state.select !== nextProps.selectDay) {
+            this.setState({
+                select: nextProps.selectDay ? nextProps.selectDay : false,
+            })
+        }
     }
 
     _PressIsShow() {
@@ -94,102 +101,105 @@ export default class CalendarView extends Component {
 
     getHeader() {
         if (this.state.isShowHeader) {
-            return (<View style={[styles.outLineViewStyle,{backgroundColor:'#efefef'}]}>
-                <TouchableOpacity onPress={()=>this.changDate(false)}><Text>pre Month</Text></TouchableOpacity>
-                         <Text>{this.state.year}-{this.state.month}</Text>
-                <TouchableOpacity onPress={()=>this.changDate(true)}><Text>next Month</Text></TouchableOpacity>
+            return (<View style={[styles.outLineViewStyle, {backgroundColor: '#efefef'}]}>
+                <TouchableOpacity onPress={() => this.changDate(false)}><Text>pre Month</Text></TouchableOpacity>
+                <Text>{this.state.year}-{this.state.month}</Text>
+                <TouchableOpacity onPress={() => this.changDate(true)}><Text>next Month</Text></TouchableOpacity>
             </View>);
         } else {
             return null;
         }
     }
 
-    changDate(isAdd){
-        var month=isAdd?this.state.month+1:this.state.month-1;
-        var year=this.state.year;
-        if(month>12){
-            year=this.state.year+1;
-            month=1;
-        }else if(month<1){
-            year=this.state.year-1;
-            month=12;
+    changDate(isAdd) {
+        var month = isAdd ? this.state.month + 1 : this.state.month - 1;
+        var year = this.state.year;
+        if (month > 12) {
+            year = this.state.year + 1;
+            month = 1;
+        } else if (month < 1) {
+            year = this.state.year - 1;
+            month = 12;
         }
         this.setState({
-            year:parseInt(year),
-            month:parseInt(month),
+            year: parseInt(year),
+            month: parseInt(month),
         });
     }
 
     getDataListView() {
-        var sum = this.mGetDate();
+        var MonthDaySum = this.mGetDate();
         var weekStart = this.mGetDataWeek();
         var today = this.mGetTodyDate();
-        var numWeek = (sum + weekStart) / 7;//4
-        // console.log("tag  weekStart" + weekStart + " sum" + sum + " numWeek" + numWeek + " select " + this.state.select);
+        var numItemByWeek = (MonthDaySum + weekStart) / 7;//4
         var OutViews = [];
-        var index = 0;
+        var ItemIndex = 0;
         var date = 1;
-        var column = (this.state.isShow) ? numWeek : 1;
-        for (var i = 0; i < column; i++) {
-            var views = [];
+        var RowSum = (this.state.isShow) ? numItemByWeek : 1;
+        console.log("tag date:" + date + " weekStart" + weekStart + " MonthDaySum" + MonthDaySum + " numItemByWeek" + numItemByWeek + " select " + this.state.select);
+        for (var i = 0; i < RowSum; i++) {
+            var RowViews = [];
             for (var j = 0; j < 7; j++) {
-                index++;
-                if (index <= weekStart) {
-                    views.push(<Text key={index}
-                                     style={styles.nullStyle}> </Text>)
+                ItemIndex++;
+                if (ItemIndex <= weekStart) {
+                    RowViews.push(<Text key={ItemIndex}
+                                        style={styles.nullStyle}> </Text>)
                 } else {
-                    if ((sum + weekStart) >= index) {
+                    if ((MonthDaySum + weekStart) >= ItemIndex) {
                         var selectStyle = {};
                         var textColorStyle = {};
                         if (date === this.state.select) {
                             //选中的样式
-                            selectStyle = {backgroundColor: "#ff9821"};
+                            selectStyle = {backgroundColor: "#ff9821", color: 'white'};
                         } else {
                             selectStyle = null;
                         }
                         if (j === 0 || j === 6) {
                             //周六周日的样式
-                            textColorStyle = {color: "#ff1760", backgroundColor: "#dfdfdf"};
+                            textColorStyle = {color: "#ff6e32", backgroundColor: "#f4f4f4"};
                         } else {
                             textColorStyle = null;
                         }
-                        if (index === (today + weekStart)) {
+                        if (ItemIndex === (today + weekStart)) {
                             //今天
-                            views.push(
-                                <TouchableOpacity key={index} onPress={this._pressDay.bind(this,this.state.year, date)}>
+                            RowViews.push(
+                                <TouchableOpacity key={ItemIndex}
+                                                  onPress={this._pressDay.bind(this, this.state.year, date)}>
                                     <Text
-                                        style={[styles.monthDayStyle, {backgroundColor: "#a6ffac"}, selectStyle, textColorStyle]}
+                                        style={[styles.monthDayStyle, {backgroundColor: "#72ff17"}, selectStyle, textColorStyle]}
                                     >{date}</Text>
                                 </TouchableOpacity>)
                         } else {
                             //除了今天的其他的所有天
-                            views.push(
-                                <TouchableOpacity key={index} onPress={this._pressDay.bind(this,this.state.year, date)}>
-                                    <Text style={[styles.monthDayStyle, selectStyle, textColorStyle]}>{date}</Text>
+                            console.log("tag date:" + date + "select" + this.state.select);
+                            RowViews.push(
+                                <TouchableOpacity key={ItemIndex}
+                                                  onPress={this._pressDay.bind(this, this.state.year, date)}>
+                                    <Text style={[styles.monthDayStyle, textColorStyle, selectStyle]}>{date}</Text>
                                 </TouchableOpacity>)
 
                         }
                     } else {
                         //空白留空
-                        views.push(<Text key={index}
-                                         style={styles.nullStyle}> </Text>)
+                        RowViews.push(<Text key={ItemIndex}
+                                            style={styles.nullStyle}> </Text>)
                     }
                     date++;
                 }
             }
             OutViews.push(<View key={i} style={styles.outLineViewStyle}>
-                {views}
+                {RowViews}
             </View>)
         }
         return OutViews;
     }
 
-    _pressDay(year,date) {
+    _pressDay(year, date) {
         this.setState({
             select: date,
         })
         if (this.props.selectOnListener) {
-            this.props.selectOnListener(year,date);
+            this.props.selectOnListener(year, date);
         }
     }
 
@@ -239,7 +249,7 @@ export default class CalendarView extends Component {
      * 获取当前时间year
      * @returns {number}
      */
-    getNowYear(){
+    getNowYear() {
         var d = new Date();
         return d.getFullYear();
     }
@@ -248,7 +258,7 @@ export default class CalendarView extends Component {
      * 获取当前时间month
      * @returns {number}
      */
-    getNowMonth(){
+    getNowMonth() {
         var d = new Date();
         return d.getMonth();
     }
@@ -283,10 +293,11 @@ const styles = StyleSheet.create({
         height: 24,
         textAlign: 'center',
         fontSize: 12,
-        paddingTop: 3,
+        paddingTop: 4,
         borderWidth: 1,
         borderRadius: 12,
         borderColor: "#ffc226",
+        overflow: 'hidden',
     },
     nullStyle: {
         width: 24,
@@ -297,10 +308,10 @@ const styles = StyleSheet.create({
     outLineViewStyle: {
         width: SCREEN_WIDTH,
         height: 40,
-        marginTop: 2,
+        marginTop: 1,
         flexDirection: "row",
         justifyContent: "space-around",
-        alignItems:'center',
+        alignItems: 'center',
     },
     bottomStyle: {
         height: 40,

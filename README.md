@@ -37,6 +37,8 @@ month | month. | string | current month |
 selectOnListener | selected CallBack. | fun | null |
 isEN | isEnglish header | boolean | ['?', '?', '?', '?', '?', '?', '?']; |
 head | head of the calendar | array | `['S', 'M', 'T', 'W', 'T', 'F', 'S']` |
+isShowHeader | show Header control | boolean | true |
+selectDay | set default select day| number | -1 |
 
 
 ### ScreenShot
