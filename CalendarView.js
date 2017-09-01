@@ -15,12 +15,13 @@ export default class CalendarView extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            year: this.props.year ? this.props.year : null,
-            month: (this.props.month && this.props.month <= 12 && this.props.month > 0) ? this.props.month : null,
+            year: this.props.year ? this.props.year : this.getNowYear(),
+            month: (this.props.month && this.props.month <= 12 && this.props.month > 0) ? this.props.month : this.getNowMonth(),
             isShow: true,
             isShowStr: '收起',
             select: -1,
             head: this.props.head ? this.props.head : (this.props.isEN ? weekEN : weekCN),
+            isShowHeader: this.props.isShowHeader ? this.props.isShowHeader : false,
         };
     }
 
@@ -36,6 +37,8 @@ export default class CalendarView extends Component {
         head: PropTypes.array,
         //是否英文 表头
         isEN: PropTypes.bool,
+        //是否显示头部
+        isShowHeader: PropTypes.bool,
     }
 
     componentDidMount() {
@@ -48,14 +51,19 @@ export default class CalendarView extends Component {
         //动态更新
         if (this.state.year !== nextProps.year || this.state.month !== nextProps.month) {
             this.setState({
-                year: nextProps.year,
-                month: (nextProps.month && nextProps.month <= 12 && nextProps.month > 0) ? nextProps.month : null,
+                year: nextProps.year?nextProps.year:this.getNowYear(),
+                month: (nextProps.month && nextProps.month <= 12 && nextProps.month > 0) ? nextProps.month : this.getNowMonth(),
                 select: -1,
             })
         }
         if (this.state.head !== nextProps.head || this.state.isEN !== nextProps.isEN) {
             this.setState({
                 head: nextProps.head ? nextProps.head : (nextProps.isEN ? weekEN : weekCN),
+            })
+        }
+        if(this.state.isShowHeader!==nextProps.isShowHeader){
+            this.setState({
+                isShowHeader: nextProps.isShowHeader ? nextProps.isShowHeader :false,
             })
         }
 
@@ -72,6 +80,7 @@ export default class CalendarView extends Component {
         return (
             <View
                 style={[styles.container, this.props.style]}>
+                {this.getHeader()}
                 <View style={styles.outLineViewStyle}>
                     {this.getTitleView()}
                 </View>
@@ -81,6 +90,34 @@ export default class CalendarView extends Component {
                 </TouchableOpacity>
             </View>
         );
+    }
+
+    getHeader() {
+        if (this.state.isShowHeader) {
+            return (<View style={[styles.outLineViewStyle,{backgroundColor:'#efefef'}]}>
+                <TouchableOpacity onPress={()=>this.changDate(false)}><Text>pre Month</Text></TouchableOpacity>
+                         <Text>{this.state.year}-{this.state.month}</Text>
+                <TouchableOpacity onPress={()=>this.changDate(true)}><Text>next Month</Text></TouchableOpacity>
+            </View>);
+        } else {
+            return null;
+        }
+    }
+
+    changDate(isAdd){
+        var month=isAdd?this.state.month+1:this.state.month-1;
+        var year=this.state.year;
+        if(month>12){
+            year=this.state.year+1;
+            month=1;
+        }else if(month<1){
+            year=this.state.year-1;
+            month=12;
+        }
+        this.setState({
+            year:parseInt(year),
+            month:parseInt(month),
+        });
     }
 
     getDataListView() {
@@ -119,7 +156,7 @@ export default class CalendarView extends Component {
                         if (index === (today + weekStart)) {
                             //今天
                             views.push(
-                                <TouchableOpacity key={index} onPress={this._pressDay.bind(this, date)}>
+                                <TouchableOpacity key={index} onPress={this._pressDay.bind(this,this.state.year, date)}>
                                     <Text
                                         style={[styles.monthDayStyle, {backgroundColor: "#a6ffac"}, selectStyle, textColorStyle]}
                                     >{date}</Text>
@@ -127,7 +164,7 @@ export default class CalendarView extends Component {
                         } else {
                             //除了今天的其他的所有天
                             views.push(
-                                <TouchableOpacity key={index} onPress={this._pressDay.bind(this, date)}>
+                                <TouchableOpacity key={index} onPress={this._pressDay.bind(this,this.state.year, date)}>
                                     <Text style={[styles.monthDayStyle, selectStyle, textColorStyle]}>{date}</Text>
                                 </TouchableOpacity>)
 
@@ -147,12 +184,12 @@ export default class CalendarView extends Component {
         return OutViews;
     }
 
-    _pressDay(data) {
+    _pressDay(year,date) {
         this.setState({
-            select: data,
+            select: date,
         })
         if (this.props.selectOnListener) {
-            this.props.selectOnListener(data);
+            this.props.selectOnListener(year,date);
         }
     }
 
@@ -191,14 +228,30 @@ export default class CalendarView extends Component {
     mGetTodyDate() {
         var d = new Date();
         // console.log("TAG"+d.getFullYear() +"  " +this.state.year+" "+(d.getMonth() + 1) +"   "+ this.state.month)
-        //当前月选中当天 如果this.state.year，this.state.month为null 是非法，默认本月，不为null是要和当月相等
-        if ((this.state.year === null || this.state.month === null ) || (d.getFullYear() === this.state.year && (d.getMonth() + 1) === this.state.month)) {
+        if (d.getFullYear() === this.state.year && (d.getMonth() + 1) === this.state.month) {
             return d.getDate();
         } else {
             return -1;
         }
     }
 
+    /**
+     * 获取当前时间year
+     * @returns {number}
+     */
+    getNowYear(){
+        var d = new Date();
+        return d.getFullYear();
+    }
+
+    /**
+     * 获取当前时间month
+     * @returns {number}
+     */
+    getNowMonth(){
+        var d = new Date();
+        return d.getMonth();
+    }
 
     /**
      * 当月第一天星期几
@@ -246,7 +299,8 @@ const styles = StyleSheet.create({
         height: 40,
         marginTop: 2,
         flexDirection: "row",
-        justifyContent: "space-around"
+        justifyContent: "space-around",
+        alignItems:'center',
     },
     bottomStyle: {
         height: 40,

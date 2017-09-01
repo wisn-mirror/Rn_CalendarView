@@ -22,8 +22,9 @@ export default class MainView extends Component {
                 month={9}
                 isEN={true}
                 //head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
-                selectOnListener={(date) => {
-                    Alert.alert("选择", "选中日期" + date);
+                isShowHeader={true}
+                selectOnListener={(year,date) => {
+                    Alert.alert("选择", "选中日期" + year+"-"+date);
                 }}
             />
         );
