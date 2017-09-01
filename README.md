@@ -74,10 +74,13 @@ module.exports = React.createClass({
         }
 });
 ```
-<img width="30%" src="./img/shot0.jpg" />
+<img width="30%" src="./img/shot1.jpg" />
 
+
+<img width="30%" src="./img/shot2.jpg" />
 
 <img width="30%" src="./img/shot3.jpg" />
+<img width="30%" src="./img/shot4.jpg" />
 
 ## Usage
 
@@ -103,15 +106,31 @@ module.exports = React.createClass({
         }
 });
 ```
-<img width="30%" src="./img/shot1.jpg" />
-
-<img width="30%" src="./img/shot2.jpg" />
-
-<img width="30%" src="./img/screenshot_en.png" />
+<img width="30%" src="./img/shot5.jpg" />
 
 
+<img width="30%" src="./img/shot6.jpg" />
 
-<img width="30%" src="./img/screenshot.jpg" />
+<img width="30%" src="./img/shot7.jpg" />
+## Usage
+```js
+import CalendarView from "./CalendarView";
+module.exports = React.createClass({
+    render () {
+        return (<CalendarView
+                    year={2017}
+                    month={9}
+                    isEN={true}
+                    isShowHeader={false}
+                    selectDay={21}
+                    selectOnListener={(year,date) => {
+                    Alert.alert("选择", "选中日期" + year+"-"+date);
+                }}
+             />);
+        }
+});
+```
+<img width="30%" src="./img/shot8.jpg" />
 
 ## License
 

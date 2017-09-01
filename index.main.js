@@ -22,8 +22,8 @@ export default class MainView extends Component {
                 year={2017}
                 month={9}
                 isEN={true}
-                head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
-                isShowHeader={true}
+                // head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
+                isShowHeader={false}
                 selectDay={21}
                 selectOnListener={(year,date) => {
                     Alert.alert("选择", "选中日期" + year+"-"+date);
@@ -47,10 +47,7 @@ calendarStyle: View.propTypes.style,
         //选中的样式
         selectDayStyle: View.propTypes.style,
         //当天选中的样式
-        currentDayStyle: View.propTypes.style,
-                currentDayStyle={{backgroundColor:"#b42fff",color:"white"}}
-                selectDayStyle={{backgroundColor:"#1c8bff",color:"white"}}
-                dayStyle={{backgroundColor:"#ddffd0",color:"#000"}}
+
 
 * */
 
