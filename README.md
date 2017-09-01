@@ -43,6 +43,7 @@ head | head of the calendar | array | `['S', 'M', 'T', 'W', 'T', 'F', 'S']` |
 
 <img width="30%" src="./img/screenshot_en.jpg" />
 
+### ScreenShot
 
 <img width="30%" src="./img/screenshot.jpg" />
 
