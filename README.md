@@ -38,16 +38,13 @@ selectOnListener | selected CallBack. | fun | null |
 isEN | isEnglish header | boolean | ['?', '?', '?', '?', '?', '?', '?']; |
 head | head of the calendar | array | `['S', 'M', 'T', 'W', 'T', 'F', 'S']` |
 
-## Example
-
-View [Rn_CalendarView](Rn_CalendarView).
 
 ### ScreenShot
 
-<img width="50%" src="./img/screenshot_en.jpg" />
+<img width="30%" src="./img/screenshot_en.jpg" />
 
 
-<img width="50%" src="./img/screenshot.jpg" />
+<img width="30%" src="./img/screenshot.jpg" />
 
 ## License
 
