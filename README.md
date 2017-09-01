@@ -41,9 +41,9 @@ head | head of the calendar | array | `['S', 'M', 'T', 'W', 'T', 'F', 'S']` |
 
 ### ScreenShot
 
-<img width="30%" src="./img/screenshot_en.jpg" />
+<img width="30%" src="./img/screenshot_en.png" />
 
-### ScreenShot
+
 
 <img width="30%" src="./img/screenshot.jpg" />
 
