@@ -22,7 +22,7 @@ export default class MainView extends Component {
                 year={2017}
                 month={9}
                 isEN={true}
-                //head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
+                head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
                 isShowHeader={true}
                 selectDay={21}
                 selectOnListener={(year,date) => {

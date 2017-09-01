@@ -26,7 +26,20 @@ export default class CalendarView extends Component {
     }
 
     static propTypes = {
-        style: View.propTypes.style,
+        //日历背景的样式
+        calendarStyle: View.propTypes.style,
+        //星期的一行的样式
+        titleHeaderRowStyle: View.propTypes.style,
+        //星期字体的样式
+        titleHeaderStyle: View.propTypes.style,
+        //正常天数的样式
+        dayStyle: View.propTypes.style,
+        //正常天数的一行的样式
+        dayRowStyle: View.propTypes.style,
+        //选中的样式
+        selectDayStyle: View.propTypes.style,
+        //当天选中的样式
+        currentDayStyle: View.propTypes.style,
         //指定年 不传值默认本年
         year: PropTypes.number,
         //指定月 不传值默认本月
@@ -86,9 +99,9 @@ export default class CalendarView extends Component {
     render() {
         return (
             <View
-                style={[styles.container, this.props.style]}>
+                style={[styles.container, this.props.calendarStyle]}>
                 {this.getHeader()}
-                <View style={styles.outLineViewStyle}>
+                <View style={[styles.outLineViewStyle,this.props.titleHeaderRowStyle]}>
                     {this.getTitleView()}
                 </View>
                 {this.getDataListView()}
@@ -150,7 +163,7 @@ export default class CalendarView extends Component {
                         var textColorStyle = {};
                         if (date === this.state.select) {
                             //选中的样式
-                            selectStyle = {backgroundColor: "#ff9821", color: 'white'};
+                            selectStyle =this.props.selectDayStyle?this.props.selectDayStyle: {backgroundColor: "#ff9821", color: 'white'};
                         } else {
                             selectStyle = null;
                         }
@@ -166,16 +179,15 @@ export default class CalendarView extends Component {
                                 <TouchableOpacity key={ItemIndex}
                                                   onPress={this._pressDay.bind(this, this.state.year, date)}>
                                     <Text
-                                        style={[styles.monthDayStyle, {backgroundColor: "#72ff17"}, selectStyle, textColorStyle]}
+                                        style={[styles.monthDayStyle, {backgroundColor: "#72ff17"}, selectStyle, textColorStyle,this.props.currentDayStyle]}
                                     >{date}</Text>
                                 </TouchableOpacity>)
                         } else {
                             //除了今天的其他的所有天
-                            console.log("tag date:" + date + "select" + this.state.select);
                             RowViews.push(
                                 <TouchableOpacity key={ItemIndex}
                                                   onPress={this._pressDay.bind(this, this.state.year, date)}>
-                                    <Text style={[styles.monthDayStyle, textColorStyle, selectStyle]}>{date}</Text>
+                                    <Text style={[styles.monthDayStyle, textColorStyle, selectStyle,this.props.dayStyle]}>{date}</Text>
                                 </TouchableOpacity>)
 
                         }
@@ -187,7 +199,7 @@ export default class CalendarView extends Component {
                     date++;
                 }
             }
-            OutViews.push(<View key={i} style={styles.outLineViewStyle}>
+            OutViews.push(<View key={i} style={[styles.outLineViewStyle,this.props.dayRowStyle]}>
                 {RowViews}
             </View>)
         }
@@ -208,7 +220,7 @@ export default class CalendarView extends Component {
         var arr = this.state.head;
         for (var i = 0; i < arr.length; i++) {
             views.push(<Text key={i}
-                             style={styles.titleStyle}>{arr[i]}</Text>)
+                             style={[styles.titleStyle,this.props.titleHeaderStyle]}>{arr[i]}</Text>)
         }
         return views;
     }
