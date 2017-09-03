@@ -17,6 +17,7 @@ module.exports = React.createClass({
                     year={2017}
                     month={9}
                     isEN={true}
+                    isScroll={true}
                     head={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
                     isShowHeader={true}
                     selectDay={21}
@@ -34,6 +35,7 @@ Property  | Description | Type | Default | note
 ----------|-------------|------|---------|------
 year | year.指定年 | string | current year |
 month | month. 指定月| string | current month |
+isScroll | 是否支持左右滑动显示上一个月，下一个月| boolean | true |
 selectOnListener | selected CallBack.选中日期的回调 | fun | null |
 isEN | isEnglish header 是否使用英文头部 | boolean | ['日', '一', '二', '三', '四', '五', '六']; |
 head | head of the calendar  自定义星期的头部字体| array | `['S', 'M', 'T', 'W', 'T', 'F', 'S']` |

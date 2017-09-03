@@ -30,6 +30,7 @@ export default class MainView extends Component {
                 selectOnListener={(year,date) => {
                     Alert.alert("选择", "选中日期" + year+"-"+date);
                 }}
+                isScroll={true}
             />
 
             </View>

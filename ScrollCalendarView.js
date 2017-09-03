@@ -41,7 +41,9 @@ export default class ScrollCalendarView extends Component {
         //是否显示头部
         isShowHeader: PropTypes.bool,
         //指定默认选中
-        selectDay:PropTypes.number,
+        selectDay: PropTypes.number,
+        //是否左右滑动
+        isScroll: PropTypes.bool,
     }
 
     constructor(props) {
@@ -51,17 +53,24 @@ export default class ScrollCalendarView extends Component {
             month: (this.props.month && this.props.month <= 12 && this.props.month > 0) ? this.props.month : this.getNowMonth(),
             isShow: true,
             isShowStr: '收起',
-            select: this.props.selectDay?this.props.selectDay:-1,
+            select: this.props.selectDay ? this.props.selectDay : -1,
             head: this.props.head ? this.props.head : (this.props.isEN ? weekEN : weekCN),
             isShowHeader: this.props.isShowHeader ? this.props.isShowHeader : false,
-            currentScrollIndex:1,
+            currentScrollIndex: 1,
+            isScroll: this.props.isScroll ? this.props.isScroll : true,
         };
     }
 
     componentDidMount() {
-       /* this.setState({
-            select: this.mGetTodyDate(),
-        });*/
+        if (this.state.isScroll) {
+            this.refs.scrollView.scrollResponderScrollTo({x: (1 * SCREEN_WIDTH), y: 0, animated: false});
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.state.isScroll) {
+            this.refs.scrollView.scrollResponderScrollTo({x: (1 * SCREEN_WIDTH), y: 0, animated: false});
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -90,8 +99,14 @@ export default class ScrollCalendarView extends Component {
             this.setState({
                 select: nextProps.selectDay ? nextProps.selectDay : false,
             })
+        } //更新选中天
+        if (this.state.isScroll !== nextProps.isScroll) {
+            this.setState({
+                isScroll: nextProps.isScroll ? nextProps.isScroll : false,
+            })
         }
     }
+
     //底部是否隐藏日历
     _PressIsShow() {
         this.setState({
@@ -101,47 +116,45 @@ export default class ScrollCalendarView extends Component {
     }
 
     render() {
+        let content = this.state.isScroll ? <ScrollView
+            ref='scrollView'
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled={true}
+            scrollEnabled={true}
+            removeClippedSubviews={true}
+            //当一帧滚动结束
+            onMomentumScrollEnd={(e) => {
+                var offSetX = e.nativeEvent.contentOffset.x;
+                var currentPageIndex = Math.floor(offSetX / SCREEN_WIDTH);
+                if (this.state.currentScrollIndex !== currentPageIndex && currentPageIndex !== 1) {
+                    var month = currentPageIndex === 2 ? this.state.month + 1 : this.state.month - 1;
+                    var year = this.state.year;
+                    if (month > 12) {
+                        year = this.state.year + 1;
+                        month = 1;
+                    } else if (month < 1) {
+                        year = this.state.year - 1;
+                        month = 12;
+                    }
+                    this.setState({
+                        year: parseInt(year),
+                        month: parseInt(month),
+                    });
+                    this.refs.scrollView.scrollResponderScrollTo({x: (1 * SCREEN_WIDTH), y: 0, animated: false});
+                }
+            }}
+        >
+            {this.getScrollDataView()}
+        </ScrollView> : this.getDataListView(this.state.year, this.state.month);
         return (
             <View
                 style={[styles.container, this.props.calendarStyle]}>
                 {this.getHeader()}
-                <View style={[styles.outLineViewStyle,this.props.titleHeaderRowStyle]}>
+                <View style={[styles.outLineViewStyle, this.props.titleHeaderRowStyle]}>
                     {this.getTitleView()}
                 </View>
-                <ScrollView
-                    ref='scrollView'
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                    pagingEnabled={true}
-                    scrollEnabled={true}
-                    removeClippedSubviews={true}
-                    //当一帧滚动结束
-                    onMomentumScrollEnd={(e)=>{
-                        var offSetX = e.nativeEvent.contentOffset.x;
-                        var currentPageIndex = Math.floor(offSetX / SCREEN_WIDTH);
-                        // console.log("dongle"+currentPageIndex);
-                        if(this.state.currentScrollIndex!==currentPageIndex&&currentPageIndex!==1){
-                            var month = currentPageIndex===2 ? this.state.month + 1 : this.state.month - 1;
-                            var year = this.state.year;
-                            if (month > 12) {
-                                year = this.state.year + 1;
-                                month = 1;
-                            } else if (month < 1) {
-                                year = this.state.year - 1;
-                                month = 12;
-                            }
-                            this.setState({
-                                year: parseInt(year),
-                                month: parseInt(month),
-                            });
-                            this.refs.scrollView.scrollResponderScrollTo({x: (1*SCREEN_WIDTH), y: 0, animated: false});
-                        }
-                        //更新状态机器
-                        /**/
-                    }}
-                >
-                    {this.getScrollDataView()}
-                </ScrollView>
+                {content}
                 <TouchableOpacity onPress={() => this._PressIsShow()}>
                     <Text style={styles.bottomStyle}>{this.state.isShowStr}</Text>
                 </TouchableOpacity>
@@ -178,19 +191,19 @@ export default class ScrollCalendarView extends Component {
         });
     }
 
-    getScrollDataView(){
-        var views =[];
-        views.push(<View key={1}>{this.getDataListView(this.state.year,this.state.month-1)}</View>)
-        views.push(<View key={2}>{this.getDataListView(this.state.year,this.state.month)}</View>)
-        views.push(<View key={3}>{this.getDataListView(this.state.year,this.state.month+1)}</View>)
+    getScrollDataView() {
+        var views = [];
+        views.push(<View key={1}>{this.getDataListView(this.state.year, this.state.month - 1)}</View>)
+        views.push(<View key={2}>{this.getDataListView(this.state.year, this.state.month)}</View>)
+        views.push(<View key={3}>{this.getDataListView(this.state.year, this.state.month + 1)}</View>)
         return views;
     }
 
 
-    getDataListView(year,month) {
-        var MonthDaySum = this.mGetDate(year,month);
-        var weekStart = this.mGetDataWeek(year,month);
-        var today = this.mGetTodyDate(year,month);
+    getDataListView(year, month) {
+        var MonthDaySum = this.mGetDate(year, month);
+        var weekStart = this.mGetDataWeek(year, month);
+        var today = this.mGetTodyDate(year, month);
         var numItemByWeek = (MonthDaySum + weekStart) / 7;//4
         var OutViews = [];
         var ItemIndex = 0;
@@ -210,7 +223,10 @@ export default class ScrollCalendarView extends Component {
                         var weekendStyle = {};
                         if (date === this.state.select) {
                             //选中的样式
-                            selectStyle =this.props.selectDayStyle?this.props.selectDayStyle: {backgroundColor: "#ff9821", color: 'white'};
+                            selectStyle = this.props.selectDayStyle ? this.props.selectDayStyle : {
+                                backgroundColor: "#ff9821",
+                                color: 'white'
+                            };
                         } else {
                             selectStyle = null;
                         }
@@ -226,7 +242,7 @@ export default class ScrollCalendarView extends Component {
                                 <TouchableOpacity key={ItemIndex}
                                                   onPress={this._pressDay.bind(this, this.state.year, date)}>
                                     <Text
-                                        style={[styles.monthDayStyle, {backgroundColor: "#72ff17"}, selectStyle, weekendStyle,this.props.currentDayStyle]}
+                                        style={[styles.monthDayStyle, {backgroundColor: "#72ff17"}, selectStyle, weekendStyle, this.props.currentDayStyle]}
                                     >{date}</Text>
                                 </TouchableOpacity>)
                         } else {
@@ -234,7 +250,8 @@ export default class ScrollCalendarView extends Component {
                             RowViews.push(
                                 <TouchableOpacity key={ItemIndex}
                                                   onPress={this._pressDay.bind(this, this.state.year, date)}>
-                                    <Text style={[styles.monthDayStyle, this.props.dayStyle,weekendStyle, selectStyle]}>{date}</Text>
+                                    <Text
+                                        style={[styles.monthDayStyle, this.props.dayStyle, weekendStyle, selectStyle]}>{date}</Text>
                                 </TouchableOpacity>)
 
                         }
@@ -246,7 +263,7 @@ export default class ScrollCalendarView extends Component {
                     date++;
                 }
             }
-            OutViews.push(<View key={i} style={[styles.outLineViewStyle,this.props.dayRowStyle]}>
+            OutViews.push(<View key={i} style={[styles.outLineViewStyle, this.props.dayRowStyle]}>
                 {RowViews}
             </View>)
         }
@@ -267,7 +284,7 @@ export default class ScrollCalendarView extends Component {
         var arr = this.state.head;
         for (var i = 0; i < arr.length; i++) {
             views.push(<Text key={i}
-                             style={[styles.titleStyle,this.props.titleHeaderStyle]}>{arr[i]}</Text>)
+                             style={[styles.titleStyle, this.props.titleHeaderStyle]}>{arr[i]}</Text>)
         }
         return views;
     }
@@ -276,7 +293,7 @@ export default class ScrollCalendarView extends Component {
      *  当月多少天
      * @returns {number}
      */
-    mGetDate(year,month) {
+    mGetDate(year, month) {
         if (year !== null && month !== null) {
             //指定日期
             var d = new Date(year, month, 0);
@@ -294,20 +311,20 @@ export default class ScrollCalendarView extends Component {
      * 获取当前日
      * @returns {number}
      */
-    mGetTodyDate(year,month) {
+    mGetTodyDate(year, month) {
         var d = new Date();
-        // console.log("TAG"+d.getFullYear() +"  " +this.state.year+" "+(d.getMonth() + 1) +"   "+ this.state.month)
         if (d.getFullYear() === year && (d.getMonth() + 1) === month) {
             return d.getDate();
         } else {
             return -1;
         }
     }
+
     /**
      * 当月第一天星期几
      * @returns {number}
      */
-    mGetDataWeek(year,month) {
+    mGetDataWeek(year, month) {
         if (year !== null && month !== null) {
             //指定日期
             var d = new Date(year, month, 0);
@@ -337,7 +354,6 @@ export default class ScrollCalendarView extends Component {
         var d = new Date();
         return d.getMonth();
     }
-
 
 
 }
