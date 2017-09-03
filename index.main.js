@@ -13,6 +13,7 @@ import {
     Alert,
 } from 'react-native';
 import CalendarView from "./CalendarView";
+import C from "./C";
 
 export default class MainView extends Component {
     render() {
@@ -30,6 +31,7 @@ export default class MainView extends Component {
                 }}
 
             />
+                <C/>
             </View>
         );
     }
