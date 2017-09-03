@@ -25,6 +25,7 @@ export  default class C extends Component{
     render(){
         return (
             <ScrollView
+            ref='scrollView'
             horizontal={true}
             showsHorizontalScrollIndicator={false}
             pagingEnabled={true}
@@ -32,6 +33,8 @@ export  default class C extends Component{
             removeClippedSubviews={true}
             onMomentumScrollEnd={()=>{
                 console.log("dongle")
+
+                this.refs.scrollView.scrollResponderScrollTo({x: (1*SCREEN_WIDTH), y: 0, animated: false});
             }}
             >
                 {this.renderChildView()}
@@ -40,7 +43,7 @@ export  default class C extends Component{
     }
     renderChildView(){
         var allChild=[];
-        var color=['red','green','yellow'];
+        var color=['green','green','green'];
         for(var i=0;i<color.length;i++){
             allChild.push(
               <View key={i} style={{backgroundColor:color[i], width:SCREEN_WIDTH,height:200}}>
