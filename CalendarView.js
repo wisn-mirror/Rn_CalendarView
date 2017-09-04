@@ -68,9 +68,7 @@ export default class CalendarView extends Component {
     }
 
     componentDidUpdate() {
-        if (this.state.isScroll) {
-            this.refs.scrollView.scrollResponderScrollTo({x: (1 * SCREEN_WIDTH), y: 0, animated: false});
-        }
+
     }
 
     componentWillReceiveProps(nextProps) {
@@ -99,11 +97,18 @@ export default class CalendarView extends Component {
             this.setState({
                 select: nextProps.selectDay ? nextProps.selectDay : false,
             })
-        } //更新选中天
+        }
+        //更新是否滑动
         if (this.state.isScroll !== nextProps.isScroll) {
             this.setState({
                 isScroll: nextProps.isScroll ? nextProps.isScroll : false,
             })
+
+            if (this.state.isScroll) {
+                this.refs.scrollView.scrollResponderScrollTo({x: (1 * SCREEN_WIDTH), y: 0, animated: false});
+            }else{
+                this.refs.scrollView.scrollResponderScrollTo({x: (0 * SCREEN_WIDTH), y: 0, animated: false});
+            }
         }
     }
 
@@ -138,8 +143,8 @@ export default class CalendarView extends Component {
                         month = 12;
                     }
                     this.setState({
-                        year: parseInt(year),
-                        month: parseInt(month),
+                        year: year,
+                        month: month,
                     });
                     this.refs.scrollView.scrollResponderScrollTo({x: (1 * SCREEN_WIDTH), y: 0, animated: false});
                 }
@@ -186,8 +191,8 @@ export default class CalendarView extends Component {
             month = 12;
         }
         this.setState({
-            year: parseInt(year),
-            month: parseInt(month),
+            year: year,
+            month: month,
         });
     }
 
@@ -203,13 +208,13 @@ export default class CalendarView extends Component {
     getDataListView(year, month) {
         var MonthDaySum = this.mGetDate(year, month);
         var weekStart = this.mGetDataWeek(year, month);
-        var today = this.mGetTodyDate(year, month);
+        var todayIndex = this.mGetTodyDate(year, month) + weekStart;
         var numItemByWeek = (MonthDaySum + weekStart) / 7;//4
         var OutViews = [];
         var ItemIndex = 0;
         var date = 1;
         var RowSum = (this.state.isShow) ? numItemByWeek : 1;
-        console.log("tag date:" + date + " weekStart" + weekStart + " MonthDaySum" + MonthDaySum + " numItemByWeek" + numItemByWeek + " select " + this.state.select);
+        // console.log("tag date:" + date + " weekStart" + weekStart + " MonthDaySum" + MonthDaySum + " numItemByWeek" + numItemByWeek + " select " + this.state.select);
         for (var i = 0; i < RowSum; i++) {
             var RowViews = [];
             for (var j = 0; j < 7; j++) {
@@ -236,7 +241,7 @@ export default class CalendarView extends Component {
                         } else {
                             weekendStyle = null;
                         }
-                        if (ItemIndex === (today + weekStart)) {
+                        if (ItemIndex === todayIndex) {
                             var currentDayStyle = this.props.currentDayStyle? this.props.currentDayStyle: {backgroundColor: "#72ff17"};
                             //今天
                             RowViews.push(
@@ -264,9 +269,11 @@ export default class CalendarView extends Component {
                     date++;
                 }
             }
-            OutViews.push(<View key={i} style={[styles.outLineViewStyle, this.props.dayRowStyle]}>
+            OutViews.push(
+                <View key={i} style={[styles.outLineViewStyle, this.props.dayRowStyle]}>
                 {RowViews}
-            </View>)
+                </View>
+            )
         }
         return OutViews;
     }
